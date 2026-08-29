@@ -41,6 +41,11 @@
 #elif defined(ARDUINO_ARCH_ESP32)
   // do nothing since we force include "arduino/ports/esp32/tusb_config_esp32.h" in tusb_option.h
 
+#elif defined(ARDUINO_ARCH_CH32H4)
+  // WCH CH32H41x. A separate port from ARDUINO_ARCH_CH32 below: this part has
+  // the newer USBFS IP on OTG_FS, not the fsdev/USBHD of the CH32V series.
+  #include "arduino/ports/ch32h4/tusb_config_ch32h4.h"
+
 #elif defined(ARDUINO_ARCH_CH32) || defined(CH32V20x) || defined(CH32V30x)
   #include "arduino/ports/ch32/tusb_config_ch32.h"
 
