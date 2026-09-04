@@ -97,7 +97,15 @@ extern Adafruit_USBD_CDC SerialTinyUSB;
 
 // Built-in support "Serial" is assigned to TinyUSB CDC
 // CH32 defines Serial as alias in WSerial.h
-#if defined(USE_TINYUSB) && !defined(ARDUINO_ARCH_CH32)
+//
+// CH32H4 does the same, in its own Arduino.h, and must: there the USB stack
+// and the console are separate build options, so "TinyUSB present, console on
+// USART1" is a valid combination and this alias would fight it. With the
+// alias active, the core's own `#define Serial Serial1` rewrites the
+// declaration below into `Adafruit_USBD_CDC Serial1`, which collides with the
+// UART object of that name -- and it does so whenever this header is included
+// before Arduino.h, which is always, because this header includes it.
+#if defined(USE_TINYUSB) && !defined(ARDUINO_ARCH_CH32) &&                         !defined(ARDUINO_ARCH_CH32H4)
 #define SerialTinyUSB Serial
 #endif
 
