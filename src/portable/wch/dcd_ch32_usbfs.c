@@ -124,7 +124,20 @@ struct usb_xfer {
   size_t   max_size;
 };
 
-static struct {
+// CFG_TUSB_MEM_SECTION on this struct, so a port can say where these live.
+//
+// The buffers below are handed to the USBFS controller as DMA addresses, and
+// CFG_TUSB_MEM_SECTION is the hook TinyUSB provides for placing exactly that
+// kind of buffer. It is empty by default, so this is a no-op for every target
+// that does not set it.
+//
+// The CH32H41x core sets it to a small region of shared RAM, to keep these
+// couple of kilobytes out of its DTCM -- a memory budget, not a reachability
+// requirement; that part's USBFS master reaches DTCM perfectly well. Doing it
+// by section rather than by having the linker script recognise this object by
+// FILENAME is what makes it mean the same thing under every build system, and
+// under LTO, where the original object names are gone before the link.
+CFG_TUSB_MEM_SECTION static struct {
   bool            ep0_tog;
   bool            isochronous[EP_MAX];
   struct usb_xfer xfer[EP_MAX][2];
